@@ -87,6 +87,7 @@ function_entry libsmbclient_functions[] =
 	PHP_FE(smbclient_rename, NULL)
 	PHP_FE(smbclient_write, NULL)
 	PHP_FE(smbclient_unlink, NULL)
+	PHP_FE(smbclient_change_remote_password, NULL)
 	{NULL, NULL, NULL}
 };
 
@@ -200,6 +201,29 @@ PHP_FUNCTION(smbclient_rename)
 			default: php_error(E_WARNING, "Couldn't open SMB directory %s: Unknown error (%d)", ourl, errno); break;
 		}
 
+		RETURN_FALSE;
+	}
+
+	RETURN_TRUE;
+}
+
+PHP_FUNCTION(smbclient_change_remote_password)
+{
+	char *remote_machine, *username, *old_password, *new_password;
+	int remote_machine_len, username_len, old_password_len, new_password_len, ret;
+
+        if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssss", 
+        			 &remote_machine, &remote_machine_len,
+        			 &username, &username_len,
+        			 &old_password, &old_password_len,
+        			 &new_password, &new_password_len) == FAILURE)
+	{
+		WRONG_PARAM_COUNT;
+	}
+
+	ret = smbc_change_remote_password(remote_machine, username, old_password, new_password);
+	if(ret < 0) {
+		php_error(E_WARNING, "Couldn't change password for %s", username);
 		RETURN_FALSE;
 	}
 
