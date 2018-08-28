@@ -1646,7 +1646,7 @@ PHP_FUNCTION(smbclient_getxattr)
 	char *url, *name;
 	strsize_t url_len, name_len;
 	int retsize;
-	char values[1000];
+	char values[16384];
 	zval *zstate;
 	smbc_getxattr_fn smbc_getxattr;
 	php_smbclient_state *state;
@@ -1659,7 +1659,7 @@ PHP_FUNCTION(smbclient_getxattr)
 	if ((smbc_getxattr = smbc_getFunctionGetxattr(state->ctx)) == NULL) {
 		RETURN_FALSE;
 	}
-	/* TODO: 1000 chars should be enough for everyone...?
+	/* TODO: 16384 chars should be enough for everyone...?
 	 * However, doing an initial blank call to determine the response size
 	 * seems wasteful, and vulnerable to a time-of-check, time-of-use
 	 * error. */
